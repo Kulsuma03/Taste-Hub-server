@@ -123,22 +123,22 @@ async function run() {
         
         // update review api 
 
-        // app.patch("/review/:id", async (req, res) => {
-        //     const { id } = req.params;
-        //       const result = await reviewCollection.updateOne({ _id: ObjectId(id) }, { $set: req.body });
+        app.patch("/updatereview/:id", async (req, res) => {
+            const { id } = req.params;
+              const result = await reviewCollection.updateOne({ _id: ObjectId(id) }, { $set: req.body });
           
-        //       if (result.matchedCount) {
-        //         res.send({
-        //           success: true,
-        //           message: `successfully updated ${req.body.name}`,
-        //         });
-        //       } else {
-        //         res.send({
-        //           success: false,
-        //           error: "Couldn't update  the product",
-        //         });
-        //       }
-        //   });
+              if (result.matchedCount) {
+                res.send({
+                  success: true,
+                  message: `successfully updated ${req.body.name}`,
+                });
+              } else {
+                res.send({
+                  success: false,
+                  error: "Couldn't update  the product",
+                });
+              }
+          });
 
 
 
