@@ -113,7 +113,7 @@ async function run() {
 
         // get review by id
 
-        app.get('/singlereview/:id', async (req, res) => {
+        app.get('/singlereview/:id', verifyJWT, async (req, res) => {
             const {id} = req.params;
             const query = { _id: ObjectId(id) };
             const review = await reviewCollection.findOne(query);
@@ -123,30 +123,26 @@ async function run() {
         
         // update review api 
 
-        app.patch("/updatereview/:id", async (req, res) => {
-            const { id } = req.params;
-              const result = await reviewCollection.updateOne({ _id: ObjectId(id) }, { $set: req.body });
-          
-              if (result.matchedCount) {
-                res.send({
-                  success: true,
-                  message: `successfully updated ${req.body.name}`,
-                });
-              } else {
-                res.send({
-                  success: false,
-                  error: "Couldn't update  the product",
-                });
-              }
+        app.put("/updatereview/:id", async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const user = req.body;
+            const option = {upsert: true};
+            const updatedReview = {
+                $set: {
+                    massage: user.massage
+                }
+            }
+            const result = await reviewCollection.updateOne(filter, updatedReview, option);
+            console.log(result);
+            // res.send(result);
           });
-
-
 
 
 
         // delete review api 
 
-        app.delete('/review/:id', verifyJWT, async (req, res) => {
+        app.delete('/reviewd/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await reviewCollection.deleteOne(query);
