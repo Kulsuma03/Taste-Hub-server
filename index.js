@@ -66,6 +66,15 @@ async function run() {
             res.send(services);
         });
 
+        // insert service
+
+        app.post('/service', async (req, res) => {
+            const review = req.body;
+            const result = await serviceCollection.insertOne(review);
+            res.send(result);
+
+        })
+
         //details api by id
 
         app.get('/details/:id', async (req, res) => {
@@ -87,7 +96,8 @@ async function run() {
             const service = req.params.service;
             let query = { service: service };
             const cursor = reviewCollection.find(query);
-            const review = await cursor.toArray();
+            const sort = {date: -1}
+            const review = await cursor.sort(sort).toArray();
             res.send(review);
         });
 
@@ -107,13 +117,13 @@ async function run() {
             }
             const cursor = reviewCollection.find(query);
             const review = await cursor.toArray();
-            console.log(review);
+            // console.log(review);
             res.send(review);
         });
 
         // get review by id
 
-        app.get('/singlereview/:id', verifyJWT, async (req, res) => {
+        app.get('/singlereview/:id', async (req, res) => {
             const {id} = req.params;
             const query = { _id: ObjectId(id) };
             const review = await reviewCollection.findOne(query);
@@ -123,20 +133,20 @@ async function run() {
         
         // update review api 
 
-        app.put("/updatereview/:id", async (req, res) => {
+        app.patch("/updatereview/:id", verifyJWT, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const user = req.body;
-            const option = {upsert: true};
             const updatedReview = {
                 $set: {
-                    massage: user.massage
+                    message: user.massage
                 }
             }
-            const result = await reviewCollection.updateOne(filter, updatedReview, option);
-            console.log(result);
-            // res.send(result);
+            const result = await reviewCollection.updateOne(filter, updatedReview);
+            console.log(user, updatedReview, result);
+            res.send(result);
           });
+
 
 
 
